@@ -3,13 +3,13 @@
 
 #include "NUMMATH.h"
 
-/*Reason for making this 
+/*Reason for making this
  * this will allow for end users of your landing page to send credentials securely
  * wrap request in server public key with client private key
  * */
 /*
  * TO-DO
- * Generate random number 
+ * Generate random number
  * Check if prime move on +2 (find better alg) think +6+-2
  *
  *
@@ -19,7 +19,7 @@ int primeTest(struct bigNum x){
   struct bigNum result;
   big_num_init(&result);
   char tmp = (char) 2;
-  set_val(&result,&tmp,1); 
+  set_val(&result,&tmp,1);
   struct bigNum x_copy = x;
   struct bigNum carry;
   big_num_init(&carry);
@@ -46,7 +46,7 @@ int primeTest(struct bigNum x){
       printBigNum(carry);
       set_val(&carry,(char*)fastmult(result,carry).num,num_size);
       if(comp(carry,x_copy)==1){
-        set_val(&carry,(char*)mod(carry,x_copy,m).num,num_size); 
+        set_val(&carry,(char*)mod(carry,x_copy,m).num,num_size);
       }
       printf("=");
       printBigNum(carry);
@@ -56,7 +56,7 @@ int primeTest(struct bigNum x){
     set_val(&result,(char*)fastmult(result,result).num,num_size);
     //printBigNum(result);
     if(comp(result,x_copy)==1){
-      set_val(&result,(char*)mod(result,x_copy,m).num,num_size); 
+      set_val(&result,(char*)mod(result,x_copy,m).num,num_size);
     }
     //printf("line 51\n");
     bigNum_shift(&x,1,-1);
@@ -85,7 +85,7 @@ int primeTest(struct bigNum x){
   for (int i = 0; i < m->length; i++) {
     printf("index: %d",i);
     printBigNum(m->table[i]);
-  } 
+  }
   free(m);
 
   if(equals(result,one)){
@@ -116,3 +116,27 @@ struct bigNum gen_prime(){
  }
  return x;
 }
+
+struct powList gen_keys(){
+    struct bigNum p = gen_prime();
+    struct bigNum q = gen_prime();
+
+    struct bigNum n = NUMMATH.fastmult(p,q);
+
+    struct bigNum phi = NUMMATH.fastmult(NUMMATH.sub(p,one),NUMMATH.sub(q,one));
+
+    struct bigNum e = gen_prime();
+
+    struct bigNum d = NUMMATH.fastdiv(
+            NUMMATH.add(one,NUMMATH.fastmult(phi,e)),e);
+    //return e,d,n
+    struct powList vals = malloc(sizeof(* powList))
+    NUMMATH.add_val(vals, e);
+    NUMMATH.add_val(vals, d);
+    NUMMATH.add_val(vals, n);
+
+}
+
+
+
+
